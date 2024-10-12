@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 import { CiGrid41, CiBoxList, CiTimer, CiStar } from "react-icons/ci";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { FaPlusCircle } from "react-icons/fa";
@@ -9,12 +10,11 @@ interface Note {
   id: number;
   title: string;
   creator: string;
-  createdAt: string; // สอดคล้องกับ prop ที่เราจะใช้ใน NoteCard
+  createdAt: string;
   favorite: boolean;
 }
 
 const Page: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isGridView, setIsGridView] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [noteName, setNoteName] = useState<string>("");
@@ -24,35 +24,38 @@ const Page: React.FC = () => {
   >("recent");
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
 
-  // Track dropdown open/close state for each note
   const [dropdownStates, setDropdownStates] = useState<{
     [key: number]: boolean;
   }>({});
 
-  // Handle adding a new note
   const handleAddNote = () => setIsModalOpen(true);
 
-  // Handle creating a new note
   const handleCreateNote = () => {
     if (noteName.trim()) {
       const newNote: Note = {
-        id: notes.length + 1, // Simple ID generation
+        id: notes.length + 1,
         title: noteName,
-        creator: "User", // Update with actual creator
+        creator: "User",
         createdAt: new Date().toISOString(),
-        favorite: false, // Set default value for favorite
+        favorite: false,
       };
 
-      // Update notes with the new note
       setNotes((prevNotes) => [...prevNotes, newNote]);
       setIsModalOpen(false);
       setNoteName("");
 
-      // Add dropdown state for the newly created note
       setDropdownStates((prevStates) => ({
         ...prevStates,
         [newNote.id]: false,
       }));
+
+      // Show success alert
+      Swal.fire({
+        icon: "success",
+        title: "สำเร็จ!",
+        text: "โน้ตถูกสร้างแล้ว",
+        confirmButtonText: "ตกลง",
+      });
     }
   };
 
@@ -64,9 +67,17 @@ const Page: React.FC = () => {
       delete newStates[noteId];
       return newStates;
     });
+
+    // Show success alert for deletion
+    Swal.fire({
+      icon: "success",
+      title: "ลบโน้ตแล้ว",
+      text: "โน้ตถูกลบสำเร็จ",
+      confirmButtonText: "ตกลง",
+    });
   };
 
-  // Handle sorting/filtering
+  //  sorting/filtering
   const handleFilterChange = (newFilter: typeof filter) => {
     setFilter(newFilter);
     setIsFilterDropdownOpen(false);
@@ -75,33 +86,27 @@ const Page: React.FC = () => {
 
     switch (newFilter) {
       case "recent":
-        // Sort from the most recent to the oldest
         sortedNotes.sort(
           (a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         break;
       case "favorite":
-        // Show only favorite notes
         sortedNotes = sortedNotes.filter((note) => note.favorite);
         break;
       case "name-asc":
-        // Sort by name A-Z
         sortedNotes.sort((a, b) => a.title.localeCompare(b.title));
         break;
       case "name-desc":
-        // Sort by name Z-A
         sortedNotes.sort((a, b) => b.title.localeCompare(a.title));
         break;
       case "date-asc":
-        // Sort by the oldest to the most recent
         sortedNotes.sort(
           (a, b) =>
             new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         );
         break;
       case "date-desc":
-        // Sort by the most recent to the oldest
         sortedNotes.sort(
           (a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -111,9 +116,10 @@ const Page: React.FC = () => {
         break;
     }
 
-    setNotes(sortedNotes); // Update the notes state with sorted/filtered notes
+    setNotes(sortedNotes);
   };
-  // Handle dropdown toggle
+
+  // dropdown
   const handleDropdownToggle = (noteId: number) => {
     setDropdownStates((prevStates) => ({
       ...prevStates,
@@ -121,7 +127,7 @@ const Page: React.FC = () => {
     }));
   };
 
-  // Handle view change (grid/list)
+  //  (grid/list)
   const handleViewChange = (isGrid: boolean) => {
     setIsGridView(isGrid);
   };
@@ -241,7 +247,7 @@ const Page: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleViewChange(false)}
-                  className={`p-2 rounded  hover:bg-willow-grove-500 ${
+                  className={`p-2 rounded  hover:bg-willow-grove-500  ${
                     !isGridView
                       ? "bg-nandor-700 text-white"
                       : "bg-gray-200 text-black"
@@ -253,11 +259,11 @@ const Page: React.FC = () => {
             </div>
           </div>
 
-          {/* Notes Display */}
+          {/* Notes display */}
           <div
-            className={`grid ${
+            className={`grid gap-4 mt-6 ${
               isGridView ? "grid-cols-4" : "grid-cols-1"
-            } gap-4 mt-4`}
+            }`}
           >
             {notes.map((note) => (
               <NoteCard
@@ -269,39 +275,45 @@ const Page: React.FC = () => {
               />
             ))}
           </div>
+          {/* Add Note Modal */}
+          {isModalOpen && (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center"
+              onClick={() => setIsModalOpen(false)}
+            >
+              <div
+                className="bg-white p-8 rounded-lg w-full max-w-md"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h2 className="text-xl font-semibold mb-4 text-black">
+                  เพิ่มโน้ตใหม่
+                </h2>
+                <input
+                  type="text"
+                  placeholder="ชื่อโน้ต"
+                  className="w-full px-4 py-2 border rounded-lg mb-4 text-gray-600"
+                  value={noteName}
+                  onChange={(e) => setNoteName(e.target.value)}
+                />
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="mr-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg"
+                  >
+                    ยกเลิก
+                  </button>
+                  <button
+                    onClick={handleCreateNote}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg"
+                  >
+                    สร้าง
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 shadow-md">
-            <h2 className="text-lg font-bold mb-4 text-gray-700">
-              เพิ่มโน้ตใหม่
-            </h2>
-            <input
-              type="text"
-              value={noteName}
-              onChange={(e) => setNoteName(e.target.value)}
-              className="border rounded-lg p-2 w-full text-gray-700"
-              placeholder="ชื่อโน้ต"
-            />
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="mr-2 bg-gray-400 px-4 py-2 rounded text-black"
-              >
-                ยกเลิก
-              </button>
-              <button
-                onClick={handleCreateNote}
-                className="bg-nandor-700 text-white px-4 py-2 rounded"
-              >
-                สร้าง
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

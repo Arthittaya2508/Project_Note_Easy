@@ -1,12 +1,11 @@
 "use client";
 import React, { useState, useEffect, ChangeEvent } from "react";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2";
 
 const NotePage: React.FC = () => {
   const [note, setNote] = useState<string>("");
-  const [fontSize, setFontSize] = useState<number>(16); // Font size state
+  const [fontSize, setFontSize] = useState<number>(16);
 
-  // Load note from local storage if it exists
   useEffect(() => {
     const savedNote = localStorage.getItem("note");
     if (savedNote) {
@@ -14,26 +13,24 @@ const NotePage: React.FC = () => {
     }
   }, []);
 
-  // Handle change in textarea
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setNote(e.target.value);
   };
 
-  // Save note to local storage and display SweetAlert
   const handleSave = () => {
     localStorage.setItem("note", note);
 
-    // Show SweetAlert on save
+    // แสดง SweetAlert เมื่อบันทึก
     Swal.fire({
       icon: "success",
-      title: "Saved!",
-      text: "Your note has been saved successfully.",
-      confirmButtonText: "OK",
+      title: "บันทึกสำเร็จ!",
+      text: "โน้ตของคุณได้ถูกบันทึกเรียบร้อยแล้ว.",
+      confirmButtonText: "ตกลง",
       confirmButtonColor: "#3085d6",
     });
   };
 
-  // Print the note
+  // Print note
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
     if (printWindow) {
@@ -61,53 +58,53 @@ const NotePage: React.FC = () => {
     const element = document.createElement("a");
     const file = new Blob([note], { type: "text/plain" });
     element.href = URL.createObjectURL(file);
-    element.download = "note.txt"; // Changed to .txt
-    document.body.appendChild(element); // Required for this to work in Firefox
+    element.download = "note.txt"; // เปลี่ยมนามสกุลได้
+    document.body.appendChild(element);
     element.click();
   };
 
-  // Apply bold formatting to selected text
-  const handleBold = () => {
-    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
+  // // Apply bold formatting to selected text
+  // const handleBold = () => {
+  //   const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+  //   const start = textarea.selectionStart;
+  //   const end = textarea.selectionEnd;
 
-    if (start !== end) {
-      const selectedText = note.slice(start, end);
-      const updatedText =
-        note.slice(0, start) + `**${selectedText}**` + note.slice(end);
-      setNote(updatedText);
-      textarea.focus();
-      textarea.setSelectionRange(start, end + 4); // Move cursor after the inserted text
-    } else {
-      setNote(note + "**bold text here**");
-    }
-  };
+  //   if (start !== end) {
+  //     const selectedText = note.slice(start, end);
+  //     const updatedText =
+  //       note.slice(0, start) + `**${selectedText}**` + note.slice(end);
+  //     setNote(updatedText);
+  //     textarea.focus();
+  //     textarea.setSelectionRange(start, end + 4);
+  //   } else {
+  //     setNote(note + "**bold text here**");
+  //   }
+  // };
 
-  // Apply italic formatting to selected text
-  const handleItalic = () => {
-    const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
+  // // Apply italic formatting to selected text
+  // const handleItalic = () => {
+  //   const textarea = document.querySelector("textarea") as HTMLTextAreaElement;
+  //   const start = textarea.selectionStart;
+  //   const end = textarea.selectionEnd;
 
-    if (start !== end) {
-      const selectedText = note.slice(start, end);
-      const updatedText =
-        note.slice(0, start) + `*${selectedText}*` + note.slice(end);
-      setNote(updatedText);
-      textarea.focus();
-      textarea.setSelectionRange(start, end + 2); // Move cursor after the inserted text
-    } else {
-      setNote(note + "*italic text here*");
-    }
-  };
+  //   if (start !== end) {
+  //     const selectedText = note.slice(start, end);
+  //     const updatedText =
+  //       note.slice(0, start) + `*${selectedText}*` + note.slice(end);
+  //     setNote(updatedText);
+  //     textarea.focus();
+  //     textarea.setSelectionRange(start, end + 2); // Move cursor after the inserted text
+  //   } else {
+  //     setNote(note + "*italic text here*");
+  //   }
+  // };
 
-  // Increase font size
+  // เพิ่มขนาดตัวหนังสือ
   const handleIncreaseFontSize = () => {
     setFontSize((prevSize) => prevSize + 2);
   };
 
-  // Decrease font size
+  // ลดขนาดตัวหนังสือ
   const handleDecreaseFontSize = () => {
     setFontSize((prevSize) => (prevSize > 8 ? prevSize - 2 : prevSize));
   };
@@ -167,7 +164,7 @@ const NotePage: React.FC = () => {
       </nav>
 
       <div className="max-w-[250mm] h-[800px] mx-auto p-5 border-gray-300">
-        {/* Note Content */}
+        {/*เนื้อหาโน๊ต */}
         <textarea
           value={note}
           onChange={handleChange}

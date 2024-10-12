@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useRouter } from "next/navigation";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2";
 
 interface LoginModalProps {
   onClose: () => void;
-  onLoginSuccess: (name: string) => void; // Add onLoginSuccess prop
+  onLoginSuccess: (name: string) => void;
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLoginSuccess }) => {
@@ -14,7 +14,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLoginSuccess }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -22,7 +22,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLoginSuccess }) => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       const response = await fetch("http://localhost:5000/api/login", {
         method: "POST",
@@ -34,35 +33,34 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLoginSuccess }) => {
 
       const data = await response.json();
       if (response.ok) {
-        // Success notification
+        // แจ้งเตือนเข้าได้
         Swal.fire({
           icon: "success",
-          title: "Login successful",
-          text: "Welcome back!",
-          confirmButtonText: "Okay",
+          title: "เข้าสู่ระบบสำเร็จ",
+          text: "ยินดีต้อนรับกลับ!",
+          confirmButtonText: "ตกลง",
         }).then(() => {
-          onLoginSuccess(username); // Pass the username to onLoginSuccess
+          onLoginSuccess(username);
           onClose();
-          router.push("http://localhost:3000"); // Redirect to homepage/add on success
+          router.push("http://localhost:3000");
         });
       } else {
         setErrorMessage(data.message);
-        // Error notification
+        // ข้อผิดพลาด
         Swal.fire({
           icon: "error",
-          title: "Login failed",
-          text: data.message || "Please check your credentials and try again.",
-          confirmButtonText: "Try Again",
+          title: "เข้าสู่ระบบไม่สำเร็จ",
+          text: data.message || "โปรดตรวจสอบข้อมูลประจำตัวและลองอีกครั้ง.",
+          confirmButtonText: "ลองอีกครั้ง",
         });
       }
     } catch (error) {
-      setErrorMessage("An error occurred. Please try again later.");
-      // General error notification
+      setErrorMessage("เกิดข้อผิดพลาด. กรุณาลองอีกครั้งในภายหลัง.");
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: "An error occurred. Please try again later.",
-        confirmButtonText: "Okay",
+        title: "ข้อผิดพลาด",
+        text: "เกิดข้อผิดพลาด. กรุณาลองอีกครั้งในภายหลัง.",
+        confirmButtonText: "ตกลง",
       });
     }
   };
@@ -70,7 +68,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLoginSuccess }) => {
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
       <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        {/* Close Button in the top-right corner */}
+        {/* ปุ่มกากบาท */}
         <button
           className="absolute top-2 right-2 text-2xl text-gray-500 hover:text-gray-800"
           onClick={onClose}
@@ -78,6 +76,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLoginSuccess }) => {
           &times;
         </button>
 
+        {/* ฟอร์มเข้าสู่ระบบ */}
         <h2 className="text-2xl font-semibold mb-4 text-center text-gray-700">
           เข้าสู่ระบบ
         </h2>
@@ -121,6 +120,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLoginSuccess }) => {
               )}
             </div>
           </div>
+
+          {/* ลงชื่อเข้าใช้ */}
           <div className="text-center">
             <button
               type="submit"
@@ -130,6 +131,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose, onLoginSuccess }) => {
             </button>
           </div>
         </form>
+
+        {/* สมัครสมาชิก */}
         <div className="text-center mt-4">
           <span className="text-sm text-gray-600">ยังไม่มีบัญชี? </span>
           <span className="text-sm text-blue-600 cursor-pointer">

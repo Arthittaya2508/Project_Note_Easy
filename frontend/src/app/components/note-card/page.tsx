@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { HiDotsVertical } from "react-icons/hi";
 import Link from "next/link";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2";
 
 interface NoteCardProps {
   id: number;
@@ -24,23 +24,24 @@ const NoteCard: React.FC<NoteCardProps> = ({
 
   const handleDelete = () => {
     Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      title: "คุณแน่ใจหรือไม่?",
+      text: "หากลบแล้วจะไม่สามารถย้อนกลับได้!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "ใช่, ลบเลย!",
+      cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log(`Deleting note with id: ${id}`);
-        // Here, you can call the API to delete the note
-        Swal.fire("Deleted!", "Your note has been deleted.", "success");
+        console.log(`ลบโน้ตที่มี ID: ${id}`);
+
+        Swal.fire("ลบแล้ว!", "โน้ตของคุณถูกลบเรียบร้อยแล้ว.", "success");
       }
     });
   };
 
-  // Format the date and time
+  // วันเวลา
   const formattedDateTime = new Date(createdAt).toLocaleString("th-TH", {
     dateStyle: "short",
     timeStyle: "short",

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react"; // Import useEffect
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { FiSearch } from "react-icons/fi";
 import { TbUserPlus } from "react-icons/tb";
@@ -12,14 +12,13 @@ function Nav() {
   const [userName, setUserName] = useState("");
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
-  // Check local storage for authentication state on component mount
   useEffect(() => {
     const storedUserName = localStorage.getItem("userName");
     const storedIsAuthenticated = localStorage.getItem("isAuthenticated");
 
     if (storedIsAuthenticated === "true") {
       setAuthenticated(true);
-      setUserName(storedUserName || ""); // Default to an empty string if null
+      setUserName(storedUserName || "");
     }
   }, []);
 
@@ -34,16 +33,16 @@ function Nav() {
   const handleLoginSuccess = (name: string) => {
     setUserName(name);
     setAuthenticated(true);
-    localStorage.setItem("userName", name); // Save username to local storage
-    localStorage.setItem("isAuthenticated", "true"); // Save authentication state
+    localStorage.setItem("userName", name);
+    localStorage.setItem("isAuthenticated", "true");
     closeLoginModal();
   };
 
   const handleLogout = () => {
     setAuthenticated(false);
     setUserName("");
-    localStorage.removeItem("userName"); // Remove username from local storage
-    localStorage.setItem("isAuthenticated", "false"); // Update authentication state
+    localStorage.removeItem("userName");
+    localStorage.setItem("isAuthenticated", "false");
     setProfileDropdownOpen(false);
   };
 
@@ -107,11 +106,11 @@ function Nav() {
             )}
           </div>
 
-          {/* User Authentication */}
+          {/* User */}
           <div className="flex items-center ml-auto ">
             {isAuthenticated ? (
               <>
-                {/* Circular Profile with Dropdown */}
+                {/* Dropdown */}
                 <div className="relative ml-10 ">
                   <div
                     className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full cursor-pointer"
@@ -119,7 +118,6 @@ function Nav() {
                   >
                     <span className="font-medium text-gray-600 text-lg">
                       {userName.charAt(0)}{" "}
-                      {/* Display first letter of user's name */}
                     </span>
                   </div>
                   {isProfileDropdownOpen && (
@@ -168,7 +166,7 @@ function Nav() {
       {isLoginModalOpen && (
         <LoginModal
           onClose={closeLoginModal}
-          onLoginSuccess={handleLoginSuccess} // Pass down the function
+          onLoginSuccess={handleLoginSuccess}
         />
       )}
     </>
